@@ -49,3 +49,43 @@ Secondary sources may be used for market discovery, but a competitive or regulat
 ## Freshness
 
 This register is dated 2026-09-30. Protocols, regulations, commercial offerings and APIs change. Every production integration needs a versioned evidence record with retrieval date.
+
+
+## 2026-09-30 competitive and adjacent-domain sources
+
+### Roaming / clearing
+- Hubject intercharge: https://www.hubject.com/intercharge-overview
+- GIREVE: https://www.gireve.com/
+- e-clearing.net: https://www.e-clearing.net/
+- ChargeHub Passport Hub: https://chargehub.com/en/ev-business-solutions/passport-ev-roaming-hub
+- Plugsurfing network: https://plugsurfing.com/network
+- E-Flux roaming: https://www.e-flux.io/products/roaming
+
+### Charging platforms
+- Driivz EV service provider: https://driivz.com/solutions/electric-vehicle-service-provider/
+- AMPECO roaming: https://www.ampeco.com/ev-charging-platform/ev-roaming/
+- Monta platform: https://monta.com/en/
+- Statiq EVlinq: https://www.statiq.in/ev-charging-software/evlinq
+- Numocity: https://www.numocity.com/
+
+### Data / navigation
+- CIRRANTIC integration data: https://actions.cirrantic.com/integration-data
+- Eco-Movement/Cariqa payment integration: https://www.eco-movement.com/eco-movement-enhances-global-charging-data-with-direct-payment-capabilities-via-cariqa-partnership/
+
+### Plug & Charge
+- Hubject Plug & Charge: https://www.hubject.com/products/plug-and-charge
+- GIREVE Plug & Charge: https://www.gireve.com/plug-and-charge-services/
+- GIREVE/Hubject/Irdeto partnership: https://www.gireve.com/gireve-hubject-irdeto-form-strategic-partnership-to-expand-plug-charge-network-access/
+
+### Energy/flexibility
+- ev.energy Eve: https://www.ev.energy/platform/overview
+- Electric Miles: https://electricmiles.com/
+
+### Adjacent interoperability
+- NPCI NETC/FASTag: https://www.npci.org.in/product/netc/about-netc
+
+### EU data infrastructure
+- EU Implementing Regulation 2025/655: https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=OJ:L_202500655
+- Common European Access Point publication: https://op.europa.eu/en/publication-detail/-/publication/132a219e-f3f5-11ef-b7db-01aa75ed71a1/language-en
+
+All entries above were reviewed for the 2026-09-30 audit and should be revalidated before production decisions.
