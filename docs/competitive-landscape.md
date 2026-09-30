@@ -2,7 +2,7 @@
 
 ## Important conclusion
 
-The basic proposition of one interface for multiple charging networks already exists. Enigma cannot treat generic aggregation as an original moat.
+The basic proposition of one interface for multiple charging networks already exists. Enigma cannot treat generic aggregation, roaming, or CPO/eMSP connectivity as an original moat.
 
 ## Global interoperability and roaming
 
@@ -16,9 +16,9 @@ Examples to study:
 - Last Mile Solutions
 - E-Flux by Road
 
-These companies demonstrate that CPO/eMSP interoperability, roaming, authorization, billing, and settlement are established categories.
+Current primary evidence confirms substantial overlap in roaming, authorization, tariffs, CDRs, APIs and settlement workflows across parts of this category.
 
-## Consumer aggregation
+## Consumer aggregation and access
 
 Examples to study:
 
@@ -29,11 +29,11 @@ Examples to study:
 - Allego
 - EVBOOST
 
-These demonstrate that multi-network discovery, navigation, and charging access are already established consumer propositions.
+Multi-network discovery and charging access are established consumer propositions.
 
 ## India
 
-Examples identified for deeper study:
+Examples to study and verify:
 
 - IONAGE
 - ChargeIndia
@@ -44,7 +44,7 @@ Examples identified for deeper study:
 - Statiq EVlinq
 - Numocity
 
-These cover different combinations of aggregation, eMSP infrastructure, roaming, OEM integration, and charging software.
+IONAGE currently describes a hardware-agnostic software layer with roaming enablement. Numocity currently describes charging, energy management, roaming and interoperability capabilities.
 
 ## Other regional examples
 
@@ -55,9 +55,11 @@ Examples include:
 - ChargeSini and Charge+ in Southeast Asia
 - ChargeLink in parts of the Middle East
 
+These require individual primary-source verification before strategic claims are made.
+
 ## Competitive categories
 
-Do not compare all companies as if they were identical. Classify competitors as:
+Do not compare all companies as if they were identical. Classify participants as:
 
 1. CPO
 2. eMSP
@@ -68,36 +70,66 @@ Do not compare all companies as if they were identical. Classify competitors as:
 7. Payment infrastructure
 8. Fleet platform
 9. Navigation platform
-10. Energy platform.
+10. Energy platform
+11. Data/NAP infrastructure
+12. Transaction/reconciliation infrastructure
 
-## What appears commoditized
+## What is already heavily served
 
 - Charger maps
 - Basic multi-network discovery
 - Basic route planning
 - Basic charging history
 - Generic app wallets
-- Basic roaming where agreements already exist
+- Managed roaming
+- OCPI connectivity
+- CPO/eMSP authorization
+- Tariff/CDR exchange
+- Basic charging APIs
 
 ## Areas requiring deeper investigation
 
-- Universal identity
-- Cross-provider authorization
-- Network-neutral transaction orchestration
-- Cross-network reliability intelligence
-- Normalized total-cost calculation
-- Universal developer API
+- Cross-provider transaction assurance
+- Evidence-based transaction recovery
+- Multi-network-of-networks orchestration
+- Provider-neutral capability graph
 - Cross-domain mobility transactions
-- Provider-neutral settlement
-- OEM-independent embedded services
-- Multi-service journey orchestration
+- Portable authorization/delegation
+- Independent reliability evidence
+- Neutral reconciliation across multiple commercial networks
+- A universal developer abstraction spanning existing roaming networks
 
 ## Strategic warning
 
 Network count is not the same as interoperability quality. A platform can list a provider without being able to start, monitor, bill, refund, or reconcile a session.
 
-The audit should therefore measure competitors by transaction depth, not by the number of logos or charge points displayed.
+But the inverse is also important: transaction depth itself is not automatically unique. Existing roaming products already perform substantial transaction and settlement work.
 
-## Source trail
+Therefore the audit should measure competitors by **exact capability, transaction depth, evidence quality, domain breadth, permissions, economics, and residual gap**, not by number of logos or charge points.
 
-This document is a research index, not a claim that every company worldwide has been exhaustively enumerated. Current competitive verification should be performed again before any investment, launch, partnership, or market-size decision.
+## Primary-source examples
+
+Hubject:
+https://www.hubject.com/intercharge-overview
+
+Plugsurfing:
+https://plugsurfing.com/api
+
+ChargeHub:
+https://chargehub.com/en/
+
+GIREVE:
+https://www.gireve.com/ocpi-2-2-1-is-now-available-on-gireves-platform/
+
+Last Mile Solutions:
+https://www.lastmilesolutions.com/roaming-information/
+
+IONAGE:
+https://www.ionage.in/why-ionage
+
+Numocity:
+https://www.numocity.com/solutions
+
+## Source discipline
+
+This document is a research index, not a mathematically exhaustive census of every company worldwide. A live competitive database with last-verified dates is required before investment, launch, or partnership decisions.
