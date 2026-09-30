@@ -199,3 +199,26 @@ Key current sources include:
 - EU AFIR data rules: https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=OJ:L_202500655
 - EU Common European Access Point research: https://op.europa.eu/en/publication-detail/-/publication/132a219e-f3f5-11ef-b7db-01aa75ed71a1/language-en
 - NPCI NETC/FASTag: https://www.npci.org.in/product/netc/about-netc
+
+
+## Adversarial audit v4
+
+The 2026-09-30 v4 audit added:
+- adversarial competitive universe expansion
+- open-source implementation audit
+- current OCPI/OCPP/ISO 15118 evolution
+- EU AFIR/CEAP data-layer analysis
+- India aggregation falsification
+- reproducible experiment protocols
+- explicit hard-stop criteria
+
+See:
+- docs/audit-2026-09-30-v4.md
+- docs/competitive-universe-expansion-2026.md
+- docs/open-source-competitive-audit-2026.md
+- docs/experiment-protocols-2026.md
+- docs/standards-update-2026.md
+
+The central research question remains: what measurable residual transaction or orchestration problem survives after existing roaming hubs, CPMS/CSMS, eMSPs, data providers, payment infrastructure, open-source systems and regulatory data layers are composed?
+
+Enigma must prove that residual gap experimentally before claiming a moat.
