@@ -1,0 +1,1516 @@
+# ENIGMA
+## Master Production Build Directive
+### Enterprise-grade interoperability, transaction orchestration, evidence and reconciliation platform
+
+You are the principal architect, staff+ engineering organization, security engineering team, SRE team, QA/conformance team, product architect, data architect, DevOps team and technical researcher responsible for turning the existing **Enigma** repository into a genuinely production-ready, enterprise-grade software platform.
+
+This is not a prototype exercise.
+
+Do not optimize for how impressive the generated UI looks. Optimize for correctness, interoperability, security, reliability, observability, operability, auditability, extensibility, testability, failure recovery and long-term maintainability.
+
+Do not claim something is production-ready unless you have actually implemented it, tested it and produced evidence for the claim.
+
+---
+
+# 1. SOURCE OF TRUTH
+
+The existing GitHub repository is:
+
+`https://github.com/Abhijeetjain4075/Enigma`
+
+First:
+
+1. Clone/open the repository.
+2. Inspect the complete repository recursively.
+3. Read every existing README, architecture document, ADR, specification, research document, standards document, competitive audit, security document, testing document and roadmap.
+4. Understand the existing decisions before changing them.
+5. Preserve valid existing research and architecture.
+6. Identify contradictions, obsolete assumptions, missing implementation decisions and undocumented dependencies.
+7. Do not throw away the research foundation merely to replace it with generated application code.
+8. Create an implementation plan based on evidence.
+9. Execute the plan incrementally.
+10. Run tests and verification after every major subsystem.
+11. Commit meaningful changes in coherent commits.
+12. Push the implementation to the repository.
+13. Never fabricate integrations, credentials, provider capabilities, transaction evidence or production traffic.
+
+The repository is currently a research/architecture foundation. Treat that as a starting point, not as evidence that production capability already exists.
+
+---
+
+# 2. PRODUCT THESIS
+
+Enigma is:
+
+**Software interoperability and transaction orchestration for the world around movement, vehicles, energy, services and transactions.**
+
+Charging is the initial wedge, not the boundary.
+
+Enigma is software-only.
+
+Enigma does NOT manufacture, own or operate:
+
+- chargers
+- charging stations
+- vehicles
+- batteries
+- parking hardware
+- toll hardware
+- physical energy infrastructure
+
+Enigma should instead provide an interoperability and orchestration layer connecting independent providers, services, identities, vehicles, transactions and operational systems.
+
+Core abstractions:
+
+- Person
+- Organization
+- Vehicle
+- Fleet
+- Service
+- Provider
+- Location
+- Capability
+- Credential
+- Authorization
+- Reservation
+- Session
+- Transaction
+- Event
+- Tariff
+- Invoice
+- Payment
+- Refund
+- Settlement
+- Reconciliation
+- Evidence
+- Dispute
+- Reliability observation
+- Policy
+- Consent
+
+Core verbs:
+
+- discover
+- verify
+- authorize
+- reserve
+- start
+- stop
+- pay
+- refund
+- settle
+- reconcile
+- route
+- schedule
+- request
+- fulfil
+- report
+- optimize
+
+The architectural analogy may be described as similar in spirit to an interoperability/transaction network such as UPI, but do NOT present Enigma as literally being UPI or as replacing regulated payment infrastructure.
+
+---
+
+# 3. CRITICAL STRATEGIC CONSTRAINT
+
+Do NOT build Enigma as merely:
+
+- another charging map
+- another EV charging app
+- another "one app for all chargers"
+- another roaming hub
+- another eMSP
+- another CSMS
+- another OCPP server
+- another OCPI wrapper
+- another charging data aggregator
+- another generic payment gateway
+- another generic SaaS dashboard
+
+Existing markets already contain substantial solutions in these categories.
+
+The implementation must therefore test whether Enigma creates value through a deeper neutral layer involving:
+
+1. cross-provider transaction evidence
+2. capability truth under actual permissions/contracts
+3. failure and recovery orchestration
+4. provider-neutral reconciliation
+5. cross-domain transaction state
+6. delegated authorization
+7. reliability intelligence based on observed outcomes
+8. protocol-agnostic transaction/evidence graphs
+
+These are hypotheses.
+
+Do not assume they are defensible moats.
+
+Continuously attempt to disprove them.
+
+---
+
+# 4. REQUIRED RESEARCH BEFORE MAJOR IMPLEMENTATION
+
+Before committing to a production architecture, perform fresh research on:
+
+## Standards
+
+- OCPP
+- OCPI
+- OICP
+- ISO 15118
+- ISO 15118-20
+- ISO 15118-21
+- relevant ISO 15118 developments
+- Plug & Charge
+- PKI
+- EV roaming standards
+- payment standards
+- relevant API standards
+- webhooks/event standards
+- identity/authentication standards
+- security standards
+- data portability/interoperability standards
+
+Track versions explicitly.
+
+Never hard-code an assumption that a protocol version is immutable.
+
+Implement version-aware adapters and capability negotiation.
+
+## Regulatory environment
+
+Research relevant requirements for:
+
+- India
+- European Union
+- United States
+- other jurisdictions where architecture implications are material
+
+Investigate:
+
+- payment regulation
+- consumer protection
+- privacy/data protection
+- location data
+- vehicle data
+- energy data
+- identity
+- cross-border data transfer
+- taxation
+- merchant-of-record implications
+- settlement
+- authorization
+- refunds
+- disputes
+- EV charging data access
+- public API requirements
+- sector-specific obligations
+
+Do not claim legal compliance merely because software controls exist.
+
+Create compliance assumptions and evidence matrices.
+
+## Competitive research
+
+Research current capabilities of:
+
+- Hubject
+- GIREVE
+- e-clearing.net
+- Plugsurfing
+- Virta
+- Driivz
+- Last Mile Solutions
+- E-Flux
+- AMPECO
+- Monta
+- GreenFlux
+- ChargeLab
+- FLO
+- EV Connect
+- AmpUp
+- Noodoe
+- chargecloud
+- The Mobility House / ChargePilot
+- ChargeHub
+- Chargemap
+- Electroverse
+- Elli
+- Allego
+- IONAGE
+- Eco-Movement
+- CIRRANTIC
+- HERE
+- TomTom
+- relevant Indian interoperability/aggregation platforms
+- OEM mobility platforms
+- fleet platforms
+- payment providers
+- open-source OCPP/OCPI/CSMS projects
+
+Also audit open-source alternatives including:
+
+- SteVe
+- CitrineOS
+- OpenCPO
+- EVtivity
+- gocpp
+- other relevant active projects discovered during research
+
+For every competitor, determine:
+
+- what they actually provide
+- what protocol layer they operate at
+- whether they handle authorization
+- whether they handle sessions
+- whether they handle CDRs
+- whether they handle payments
+- whether they handle settlement
+- whether they handle refunds
+- whether they handle disputes
+- whether they expose evidence
+- whether they provide reconciliation
+- whether they provide reliability intelligence
+- whether they support delegated authorization
+- whether they support cross-domain orchestration
+- whether the functionality is public, contractual or merely claimed
+
+Never infer private capabilities from marketing language.
+
+---
+
+# 5. ARCHITECTURE
+
+Design Enigma as modular, provider-neutral infrastructure.
+
+The target logical architecture should contain at least:
+
+### Interface layer
+
+- Web application
+- Admin console
+- Provider portal
+- Operations console
+- API
+- Webhooks
+- SDK surface
+- machine-to-machine interfaces
+
+### Identity and access layer
+
+- authentication
+- authorization
+- organizations
+- tenants
+- service accounts
+- API keys
+- OAuth/OIDC where appropriate
+- RBAC
+- ABAC/policy evaluation
+- delegated authorization
+- credential lifecycle
+- consent
+- audit trail
+
+### Provider integration layer
+
+Versioned adapters for:
+
+- OCPP where appropriate
+- OCPI
+- OICP
+- provider APIs
+- payment providers
+- navigation/data providers
+- future parking/toll/service/energy providers
+
+Every provider integration must expose a normalized capability contract.
+
+Do not assume that a provider supporting a protocol supports every operation of that protocol.
+
+### Capability graph
+
+Model capabilities independently from provider listings.
+
+Distinguish:
+
+- listed
+- discoverable
+- data-connected
+- authorization-connected
+- session-connected
+- payment-connected
+- refund-connected
+- reconciliation-connected
+- fully operational
+
+Capability assertions must have provenance.
+
+### Transaction orchestration engine
+
+Implement deterministic transaction workflows.
+
+At minimum support:
+
+`created → validated → authorized → initiated → active → completed → billed → settled`
+
+And failure/exception states including:
+
+- rejected
+- expired
+- failed
+- cancelled
+- disputed
+- refunded
+- partially_refunded
+- reconciliation_required
+
+Transitions must be explicit and validated.
+
+No arbitrary database status mutation.
+
+### Evidence system
+
+Every important external fact should be traceable.
+
+Evidence should include, where applicable:
+
+- provider
+- source ID
+- external ID
+- protocol
+- protocol version
+- timestamp observed
+- timestamp received
+- expiry/freshness
+- request correlation ID
+- transaction correlation ID
+- transformation version
+- adapter version
+- confidence
+- conflict status
+- raw/normalized relationship
+
+Never silently overwrite contradictory provider evidence.
+
+### Ledger/reconciliation system
+
+Implement an auditable financial/event reconciliation architecture.
+
+Support:
+
+- authorization
+- capture
+- charge
+- tax
+- fee
+- refund
+- dispute
+- payable
+- receivable
+- settlement
+- FX
+- provider invoice
+- external transaction references
+
+Prefer immutable records and compensating entries over destructive mutation.
+
+Reconciliation must identify:
+
+- missing records
+- duplicate records
+- amount mismatch
+- currency mismatch
+- timestamp mismatch
+- provider mismatch
+- invoice mismatch
+- refund mismatch
+- settlement mismatch
+
+Every unresolved exception must have an explicit state and owner/workflow.
+
+---
+
+# 6. DATA ARCHITECTURE
+
+Use a strongly typed canonical domain model.
+
+Requirements:
+
+- stable IDs
+- tenant isolation
+- external IDs
+- provider namespaces
+- idempotency keys
+- correlation IDs
+- causation IDs
+- timestamps with explicit semantics
+- versioning
+- optimistic concurrency where appropriate
+- soft deletion only where semantically correct
+- immutable audit records
+- schema migration strategy
+- backward compatibility strategy
+- data retention policies
+- encryption
+- secrets separation
+
+Do not make provider-specific schemas the canonical data model.
+
+Use adapters.
+
+Unknown provider fields must not be silently discarded where preservation is necessary for future compatibility.
+
+---
+
+# 7. API DESIGN
+
+Create a production-quality API architecture.
+
+Requirements:
+
+- explicit API versioning
+- OpenAPI specification
+- typed request/response schemas
+- consistent error model
+- pagination
+- filtering
+- sorting
+- idempotency
+- optimistic concurrency
+- authentication
+- authorization
+- rate limits
+- abuse protection
+- request correlation
+- trace propagation
+- webhook signatures
+- replay protection
+- webhook retries
+- dead-letter handling
+- API deprecation policy
+
+Mutating endpoints must be safe under retries.
+
+Document every externally observable state transition.
+
+---
+
+# 8. SECURITY
+
+Treat security as a first-class architecture requirement.
+
+Perform a full threat model covering:
+
+- account takeover
+- credential theft
+- API key leakage
+- OAuth attacks
+- tenant isolation failures
+- authorization bypass
+- privilege escalation
+- webhook forgery
+- replay attacks
+- idempotency attacks
+- transaction manipulation
+- payment manipulation
+- refund abuse
+- provider impersonation
+- malicious provider data
+- data poisoning
+- location privacy
+- vehicle data exposure
+- secret leakage
+- SSRF
+- injection
+- XSS
+- CSRF where relevant
+- supply-chain attacks
+- dependency vulnerabilities
+- insecure deserialization
+- race conditions
+- event duplication
+- event ordering
+- denial of service
+- insider threats
+
+Apply:
+
+- least privilege
+- deny by default
+- secrets management
+- encryption in transit
+- encryption at rest
+- secure headers
+- secure cookies where relevant
+- input validation
+- output encoding
+- dependency scanning
+- SAST
+- DAST where practical
+- container/image scanning
+- secret scanning
+- audit logging
+- anomaly detection
+- incident response
+
+Do not invent security certifications.
+
+Create evidence-based security readiness documentation.
+
+---
+
+# 9. RELIABILITY
+
+Design for partial failure.
+
+Assume:
+
+- providers go offline
+- APIs timeout
+- webhooks arrive late
+- webhooks arrive twice
+- webhooks arrive out of order
+- provider state conflicts with Enigma state
+- CDRs arrive hours later
+- tariffs change
+- sessions disappear
+- refunds partially succeed
+- payment providers fail
+- networks partition
+- databases fail over
+- messages are duplicated
+- clients retry aggressively
+
+Implement:
+
+- idempotency
+- retry policies
+- exponential backoff
+- jitter
+- circuit breakers where appropriate
+- timeout budgets
+- dead-letter queues
+- replay mechanisms
+- compensating transactions
+- reconciliation jobs
+- operational runbooks
+- graceful degradation
+- kill switches
+- provider isolation
+- backpressure
+- rate limiting
+
+Do not blindly retry financial or physical-world commands.
+
+Every command must have a safety classification.
+
+---
+
+# 10. OBSERVABILITY
+
+Implement enterprise-grade observability.
+
+Include:
+
+- structured logs
+- metrics
+- distributed tracing
+- correlation IDs
+- transaction IDs
+- provider IDs
+- tenant IDs
+- audit events
+- business metrics
+- SLO metrics
+- provider reliability metrics
+- integration health
+- queue health
+- reconciliation backlog
+- failed transaction rate
+- authorization success rate
+- session completion rate
+- billing mismatch rate
+- refund failure rate
+- webhook delay
+- API latency
+- dependency latency
+
+Create dashboards and actionable alerts.
+
+Avoid logging secrets or sensitive personal information.
+
+---
+
+# 11. TESTING
+
+Do not stop at unit tests.
+
+Implement:
+
+### Unit tests
+
+For domain logic and deterministic state transitions.
+
+### Contract tests
+
+For APIs and provider adapters.
+
+### Protocol/conformance tests
+
+Where applicable.
+
+### Integration tests
+
+Database, queues, external service abstractions.
+
+### End-to-end tests
+
+Complete workflows.
+
+### Failure tests
+
+Inject:
+
+- duplicate commands
+- delayed webhooks
+- missing CDRs
+- contradictory CDRs
+- stale availability
+- tariff changes
+- timeouts
+- provider outages
+- duplicate refunds
+- partial refunds
+- payment failures
+
+### Property/invariant tests
+
+Prove invariants such as:
+
+- impossible transaction transitions cannot occur
+- retries do not duplicate financial effects
+- unauthorized principals cannot execute operations
+- tenant data cannot cross boundaries
+- reconciliation remains deterministic
+- ledger balance invariants remain true
+
+### Load tests
+
+Measure:
+
+- throughput
+- latency
+- concurrency
+- queue pressure
+- database behavior
+- failure recovery
+
+### Security tests
+
+Automate security checks in CI.
+
+---
+
+# 12. TRANSACTION LABORATORY
+
+Build a deterministic local transaction laboratory before depending on real providers.
+
+Create at least two simulated providers with intentionally different behavior.
+
+Provider A:
+
+- normal protocol behavior
+- correct timestamps
+- correct CDR
+- successful payment
+
+Provider B:
+
+- delayed webhook
+- stale availability
+- duplicate event
+- mismatched CDR
+- refund failure
+- temporary outage
+
+Then demonstrate:
+
+1. discovery
+2. capability evaluation
+3. authorization
+4. initiation
+5. active session
+6. stop
+7. CDR
+8. billing
+9. reconciliation
+10. evidence generation
+11. failure recovery
+
+The simulator must be deterministic and repeatable.
+
+The simulator is not evidence that real-world providers behave this way.
+
+---
+
+# 13. CRITICAL EXPERIMENTS
+
+Implement automated experiments corresponding to the existing Enigma research protocol.
+
+### Experiment A — Existing-stack reconstruction
+
+Compare:
+
+- direct provider integration
+- roaming-hub style integration
+- Enigma orchestration
+
+Measure:
+
+- integration complexity
+- number of dependencies
+- failure visibility
+- evidence completeness
+- reconciliation visibility
+- recovery control
+- latency
+- operational burden
+
+### Experiment B — Capability truth
+
+Compare:
+
+- static listing
+- dynamic availability
+- connector compatibility
+- tariff
+- authorization eligibility
+- reservation
+- payment capability
+- contract scope
+- observed transaction success
+
+### Experiment C — Failure injection
+
+Measure whether Enigma prevents duplicate effects and produces recoverable state.
+
+### Experiment D — Cross-provider reconciliation
+
+Inject mismatches and measure:
+
+- detection
+- classification
+- diagnosis
+- resolution
+- unresolved state handling
+
+### Experiment E — Cross-domain orchestration
+
+Simulate:
+
+charging + parking + toll
+
+with shared transaction correlation and partial failure.
+
+### Experiment F — Delegated authorization
+
+Test:
+
+person → vehicle → fleet → provider → service
+
+with:
+
+- time limits
+- geographic limits
+- spending limits
+- service restrictions
+
+### Experiment G — Reliability intelligence
+
+Compare provider-reported availability against observed:
+
+- authorization
+- start
+- completion
+- billing
+
+Do not call this predictive intelligence unless statistically validated.
+
+### Experiment H — Economics
+
+Model:
+
+- API costs
+- infrastructure
+- support
+- disputes
+- payment fees
+- settlement costs
+- data licensing
+- integration cost
+- transaction volume
+
+Determine whether the proposed layer can create economic value.
+
+---
+
+# 14. UX
+
+Build the UI around operational truth rather than marketing claims.
+
+Required surfaces:
+
+### Operator console
+
+- provider health
+- transaction lifecycle
+- exceptions
+- reconciliation
+- evidence
+- alerts
+- audit history
+
+### Provider console
+
+- integration status
+- capabilities
+- credentials
+- webhook health
+- transaction visibility
+- reconciliation
+- errors
+- configuration
+
+### Customer/consumer interface
+
+Only expose workflows that are actually supported by connected capabilities.
+
+Never display:
+
+"Available"
+
+when Enigma only knows that a location exists.
+
+Use precise states such as:
+
+- listed
+- recently observed
+- data-connected
+- authorization available
+- session available
+- payment available
+- capability unknown
+- stale
+- unavailable
+- degraded
+
+### Developer portal
+
+Include:
+
+- API documentation
+- authentication
+- webhooks
+- SDK documentation
+- schemas
+- examples
+- sandbox
+- test credentials
+- integration guides
+- versioning
+- changelog
+
+---
+
+# 15. MULTI-TENANCY
+
+Support enterprise isolation.
+
+Model:
+
+- tenant
+- organization
+- users
+- roles
+- service accounts
+- API clients
+- provider relationships
+- policies
+- resources
+- audit scope
+
+Enforce tenant boundaries at:
+
+- API
+- authorization
+- database
+- storage
+- events
+- queues
+- analytics
+- logs
+- support tooling
+
+Test cross-tenant access explicitly.
+
+---
+
+# 16. DEPLOYMENT
+
+Build a real production deployment architecture.
+
+Use infrastructure that is:
+
+- reproducible
+- environment-separated
+- secret-safe
+- observable
+- rollback-capable
+- horizontally scalable where appropriate
+
+Create:
+
+- local development environment
+- test environment
+- staging environment
+- production environment
+
+Infrastructure must be represented as code wherever practical.
+
+Never commit secrets.
+
+Use environment variable schemas and secret-management documentation.
+
+---
+
+# 17. CI/CD
+
+Create CI that executes:
+
+1. formatting
+2. linting
+3. type checking
+4. unit tests
+5. integration tests
+6. contract tests
+7. schema validation
+8. security scanning
+9. dependency auditing
+10. build
+11. migration validation
+12. artifact generation
+
+Production deployment must require successful gates.
+
+Add rollback procedures.
+
+Do not create meaningless CI merely to make the repository look enterprise-grade.
+
+---
+
+# 18. DATABASE AND MIGRATIONS
+
+Implement:
+
+- normalized relational schema where appropriate
+- indexes based on measured query patterns
+- migration tooling
+- migration rollback strategy where feasible
+- seed/test fixtures
+- transaction boundaries
+- connection pooling
+- backup strategy
+- restore testing
+- retention policies
+
+Do not use a database schema that cannot support auditability and reconciliation.
+
+---
+
+# 19. SDK AND DEVELOPER EXPERIENCE
+
+Where appropriate, create:
+
+- TypeScript SDK
+- server-side SDK
+- strongly typed models
+- API client
+- webhook verification utilities
+- idempotency utilities
+- examples
+- sandbox
+
+Keep SDK behavior generated or contract-derived from the canonical API where possible to reduce drift.
+
+---
+
+# 20. PROVIDER ADAPTER CONTRACT
+
+Every provider adapter must implement a consistent interface.
+
+At minimum expose concepts equivalent to:
+
+- discover
+- get_capabilities
+- authorize
+- start
+- stop
+- observe
+- get_session
+- get_cdr
+- get_tariff
+- refund
+- reconcile
+- health_check
+
+Not every provider will support every operation.
+
+Unsupported operations must be explicitly represented.
+
+Never silently emulate unsupported provider functionality.
+
+---
+
+# 21. DATA PROVENANCE
+
+Every normalized provider fact must preserve provenance.
+
+At minimum:
+
+- source
+- provider
+- namespace
+- external ID
+- observed time
+- received time
+- expiry
+- protocol
+- protocol version
+- retrieval mechanism
+- adapter version
+- transformation version
+- confidence
+- conflict status
+
+Implement conflict handling.
+
+If two providers disagree, preserve the disagreement.
+
+Do not silently choose one.
+
+---
+
+# 22. COMPLIANCE AND GOVERNANCE
+
+Create:
+
+- security policy
+- privacy policy architecture
+- data classification
+- retention policy
+- incident response
+- disaster recovery
+- business continuity
+- access review
+- change management
+- dependency management
+- vulnerability management
+- provider onboarding policy
+- provider offboarding policy
+- API deprecation policy
+- data deletion process
+- audit process
+
+Clearly distinguish:
+
+- technical control
+- policy
+- legal requirement
+- certification
+- operational evidence
+
+Never claim legal compliance or certification without evidence.
+
+---
+
+# 23. DOCUMENTATION
+
+The repository must contain high-quality documentation.
+
+At minimum:
+
+- README
+- architecture
+- threat model
+- API documentation
+- data model
+- deployment
+- operations
+- provider integration
+- adapter contract
+- testing
+- security
+- privacy/data governance
+- incident response
+- disaster recovery
+- reconciliation
+- transaction lifecycle
+- capability model
+- evidence model
+- developer onboarding
+- contributing
+- changelog
+- ADRs
+- experiment reports
+
+Documentation must describe what actually exists.
+
+---
+
+# 24. QUALITY BAR
+
+Use these principles:
+
+- correctness over feature count
+- evidence over assumptions
+- deterministic behavior over magic
+- explicit state over hidden state
+- immutable audit history over destructive mutation
+- provider adapters over provider-specific domain logic
+- standards compatibility over proprietary lock-in
+- graceful failure over optimistic assumptions
+- observability over blind automation
+- reversible changes over irreversible changes
+- secure defaults over convenience
+- measured performance over theoretical performance
+
+---
+
+# 25. ADVERSARIAL REVIEW
+
+After implementation, attack your own architecture.
+
+Ask:
+
+1. Can Hubject or another roaming provider add this feature?
+2. Can an eMSP add it?
+3. Can a CPMS add it?
+4. Can an OEM add it?
+5. Can a payment provider add it?
+6. Can a data provider add it?
+7. Can an enterprise build it internally?
+8. Can open source reproduce it?
+9. Can regulation standardize it?
+10. Can the functionality become a commodity?
+11. Does Enigma actually need a network effect?
+12. Does Enigma need proprietary data?
+13. Is there a payer?
+14. Does the payer have an economic reason to buy it?
+15. Is the required authorization obtainable?
+16. Who carries liability when something fails?
+17. What happens when the provider disappears?
+18. What happens when the provider lies or supplies contradictory information?
+19. What happens when Enigma is unavailable?
+20. What happens when payment succeeds but service fails?
+21. What happens when service succeeds but billing fails?
+22. What happens when a refund is duplicated?
+23. Can the system prove what happened months later?
+
+If the answer exposes a fundamental weakness, document it and fix it where appropriate.
+
+Do not hide weaknesses.
+
+---
+
+# 26. PRODUCTION READINESS GATE
+
+Do not declare Enigma production-ready until all applicable gates have evidence.
+
+### Product
+
+- workflows implemented
+- unsupported workflows explicitly rejected
+
+### Architecture
+
+- modular
+- versioned
+- extensible
+- documented
+
+### Security
+
+- threat model
+- automated security checks
+- secret management
+- authorization tests
+
+### Reliability
+
+- failure injection
+- recovery
+- retries
+- idempotency
+- reconciliation
+
+### Data
+
+- migrations
+- backups
+- restore verification
+- provenance
+- retention
+
+### API
+
+- OpenAPI
+- authentication
+- authorization
+- rate limiting
+- versioning
+- webhook security
+
+### Testing
+
+- unit
+- integration
+- contract
+- E2E
+- failure
+- security
+- performance
+
+### Operations
+
+- logs
+- metrics
+- tracing
+- alerts
+- runbooks
+- incident response
+
+### Deployment
+
+- reproducible
+- staged
+- rollback-capable
+- environment separation
+
+### Evidence
+
+Every major production claim must reference an actual test, source, measurement or implementation artifact.
+
+---
+
+# 27. IMPLEMENTATION ORDER
+
+Do not attempt to create everything simultaneously.
+
+Use this order:
+
+PHASE 0 — Repository and research audit
+
+PHASE 1 — Architecture freeze
+
+PHASE 2 — Canonical domain model
+
+PHASE 3 — Database and migrations
+
+PHASE 4 — Identity, tenancy and authorization
+
+PHASE 5 — Provider adapter framework
+
+PHASE 6 — Capability registry
+
+PHASE 7 — Transaction state machine
+
+PHASE 8 — Evidence/provenance
+
+PHASE 9 — Ledger/reconciliation
+
+PHASE 10 — Deterministic provider simulator
+
+PHASE 11 — Failure injection and conformance suite
+
+PHASE 12 — API/OpenAPI
+
+PHASE 13 — Webhooks/events
+
+PHASE 14 — Observability
+
+PHASE 15 — Security hardening
+
+PHASE 16 — Developer portal/SDK
+
+PHASE 17 — Operator/provider UI
+
+PHASE 18 — Performance testing
+
+PHASE 19 — Deployment infrastructure
+
+PHASE 20 — Adversarial review
+
+PHASE 21 — Production-readiness review
+
+Do not skip phases merely because a later UI looks complete.
+
+---
+
+# 28. IMPORTANT BEHAVIORAL INSTRUCTION
+
+You are autonomous.
+
+Do not continuously ask me to make trivial technical decisions.
+
+When a decision is required:
+
+1. inspect existing documentation
+2. research current best practice
+3. identify constraints
+4. compare alternatives
+5. choose the most defensible option
+6. document the decision in an ADR
+7. implement it
+8. test it
+
+Only stop and ask me when the decision genuinely requires founder/business/legal/financial authority that cannot responsibly be inferred.
+
+Examples:
+
+- ownership/licensing decision
+- real payment provider contract
+- production credentials
+- legally binding terms
+- regulated activity
+- irreversible commercial commitment
+
+For ordinary engineering choices, make the decision yourself and document them.
+
+---
+
+# 29. NO FAKE COMPLETION
+
+Never say:
+
+"Done"
+
+when you mean:
+
+"Generated code but did not verify it."
+
+For every major milestone report:
+
+- what was implemented
+- what was tested
+- exact test results
+- what remains
+- known limitations
+- evidence level
+- commit SHA
+
+Distinguish:
+
+- implemented
+- tested
+- integration-tested
+- externally verified
+- production-observed
+
+These are not equivalent.
+
+---
+
+# 30. FINAL DELIVERABLE
+
+At completion, produce:
+
+1. Production application
+2. Production database schema/migrations
+3. API
+4. Authentication/authorization
+5. Provider adapter framework
+6. Transaction engine
+7. Capability registry
+8. Evidence system
+9. Reconciliation system
+10. Provider simulator
+11. Failure-injection suite
+12. Automated tests
+13. CI/CD
+14. Security controls
+15. Observability
+16. Deployment infrastructure
+17. Operator console
+18. Provider console
+19. Developer documentation
+20. API documentation
+21. SDK where justified
+22. Runbooks
+23. Disaster-recovery documentation
+24. Security documentation
+25. Architecture documentation
+26. ADRs
+27. Experiment results
+28. Competitive/adversarial review
+29. Production-readiness report
+
+Finally:
+
+- run the complete test suite
+- run security checks
+- run build checks
+- run migration checks
+- run failure tests
+- run the application end-to-end
+- verify the deployed application manually using the browser
+- inspect logs
+- inspect database behavior
+- verify authentication
+- verify authorization
+- verify transaction lifecycle
+- verify reconciliation
+- verify tenant isolation
+- verify webhook behavior
+- verify rollback capability
+
+Then commit all substantive changes.
+
+Push them to:
+
+`Abhijeetjain4075/Enigma`
+
+Do not overwrite or delete valuable existing research without an explicit reason.
+
+The final report must include:
+
+- architecture summary
+- technology choices and rationale
+- completed features
+- test matrix
+- security findings
+- performance findings
+- reliability findings
+- unresolved risks
+- production blockers
+- deployment instructions
+- exact commit SHAs
+- exact evidence supporting the production-readiness conclusion
+
+Most importantly:
+
+**Build the real Enigma platform, not a convincing mockup of one.**
+
+When uncertain, investigate.
+
+When assumptions conflict with evidence, follow evidence.
+
+When a feature is already commoditized by existing infrastructure, reuse that infrastructure instead of rebuilding it.
+
+When a proposed Enigma differentiator cannot survive adversarial comparison, document that finding rather than pretending it is a moat.
+
+The goal is not maximum code.
+
+The goal is maximum verified capability per unit of complexity.
+
+Start now with Phase 0.
