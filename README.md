@@ -157,3 +157,45 @@ Every future capability should answer:
 5. What evidence proves the operation works?
 6. What regulatory responsibility attaches to the flow?
 7. What becomes harder to replicate as the network grows?
+
+
+## Deep audit and competitive research
+
+The latest research pass is recorded in:
+
+- docs/audit-2026-09-30-v3.md
+- docs/competitive-system-map-2026.md
+- docs/competitive-strategies-2026.md
+- docs/competitive-evidence-register-2026.md
+- docs/residual-gap-hypotheses.md
+- docs/research-methodology-2026.md
+- docs/implementation-blueprint.md
+
+These documents deliberately distinguish public evidence from hypotheses and unverified capabilities. The competitive analysis covers roaming hubs, clearing, eMSPs, CPMS/CSMS, charging-data providers, Plug & Charge trust infrastructure, energy/flexibility systems, toll interoperability, and regulatory data infrastructure.
+
+## Current implementation warning
+
+Enigma is not yet a production interoperability service. The repository currently contains a research and architecture foundation. The next validation step is executable transaction orchestration with a deterministic provider simulator, protocol fixtures, evidence capture, reconciliation, automated tests, and then one authorized real provider or sandbox.
+
+## Fresh external evidence
+
+Key current sources include:
+
+- Hubject intercharge: https://www.hubject.com/intercharge-overview
+- GIREVE: https://www.gireve.com/
+- e-clearing.net: https://www.e-clearing.net/
+- ChargeHub Passport Hub: https://chargehub.com/en/ev-business-solutions/passport-ev-roaming-hub
+- Plugsurfing: https://plugsurfing.com/network
+- Driivz: https://driivz.com/solutions/electric-vehicle-service-provider/
+- AMPECO: https://www.ampeco.com/ev-charging-platform/ev-roaming/
+- Monta: https://monta.com/en/
+- E-Flux by Road: https://www.e-flux.io/products/roaming
+- Statiq EVlinq: https://www.statiq.in/ev-charging-software/evlinq
+- Numocity: https://www.numocity.com/
+- CIRRANTIC: https://actions.cirrantic.com/integration-data
+- Eco-Movement: https://www.eco-movement.com/eco-movement-enhances-global-charging-data-with-direct-payment-capabilities-via-cariqa-partnership/
+- OCPI: https://github.com/ocpi/ocpi
+- OCPP: https://openchargealliance.org/protocols/
+- EU AFIR data rules: https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=OJ:L_202500655
+- EU Common European Access Point research: https://op.europa.eu/en/publication-detail/-/publication/132a219e-f3f5-11ef-b7db-01aa75ed71a1/language-en
+- NPCI NETC/FASTag: https://www.npci.org.in/product/netc/about-netc
