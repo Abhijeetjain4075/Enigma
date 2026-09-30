@@ -25,3 +25,7 @@
 This table records public evidence, not market-share rankings or endorsements.
 
 A missing feature means “not verified in the cited public evidence,” not “does not exist.”
+
+| Virta | CPMS/eMSP/managed roaming | 800k+ charge points including roaming, managed roaming, credit-risk handling, VAT, reporting, Hubject/GIREVE connectivity, energy services | managed roaming + operator software + energy | https://www.virta.global/charging-solution/roaming |
+| Last Mile Solutions | roaming/CPMS | 1.25M+ EVSE access, per-EVSE tariffs, CDR billing rules, live tariff feeds | detailed roaming tariff/CDR operations | https://www.lastmilesolutions.com/roaming-information/ |
+| Eco-Movement | charging data | 5,337 networks / 145 markets tracked in Aug 2026; data quality and real-time status | global data aggregation and quality | https://www.eco-movement.com/ev-charging-overview/ |
