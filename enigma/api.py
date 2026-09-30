@@ -121,7 +121,7 @@ def create_app(settings: Settings | None = None, *, database_url: str | None = N
             "with simulator-only providers."
         )
     engine = make_engine(config.database_url)
-    if config.environment in {"development", "test"}:
+    if config.environment in {"development", "test"} and config.database_url.startswith("sqlite"):
         initialize_local_schema(engine)
     session_factory = make_session_factory(engine)
     if engine.dialect.name == "postgresql":

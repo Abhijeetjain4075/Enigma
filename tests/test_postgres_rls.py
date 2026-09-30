@@ -18,7 +18,7 @@ from enigma.settings import Settings
 def test_postgres_rls_isolation_and_missing_context_denial() -> None:
     url = os.environ["ENIGMA_TEST_POSTGRES_URL"]
     settings = Settings(
-        environment="staging",
+        environment="test",
         database_url=url,
         api_keys={"tenant-one-" + "a" * 40: "tenant-one", "tenant-two-" + "b" * 40: "tenant-two"},
     )
