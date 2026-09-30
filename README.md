@@ -194,8 +194,11 @@ The latest research pass is recorded in:
 - docs/residual-gap-hypotheses.md
 - docs/research-methodology-2026.md
 - docs/implementation-blueprint.md
+- docs/current-competitive-standards-regulatory-audit-2026-09-30.md
 
 These documents deliberately distinguish public evidence from hypotheses and unverified capabilities. The competitive analysis covers roaming hubs, clearing, eMSPs, CPMS/CSMS, charging-data providers, Plug & Charge trust infrastructure, energy/flexibility systems, toll interoperability, and regulatory data infrastructure.
+
+The 2026-09-30 public-source audit adds 43 subject profiles across providers, open-source substitutes, protocols, and selected EU, India, and U.S. regulatory/security boundaries; it records sources, confidence limits, falsifiable gaps, and unavailable evidence.
 
 ## Current implementation warning
 
