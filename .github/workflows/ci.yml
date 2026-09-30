@@ -64,3 +64,16 @@ jobs:
       - run: uv run pip-audit
       - name: Build container image
         run: docker build --tag enigma-transaction-lab:ci .
+      - name: Verify production image fails closed without real adapters
+        shell: bash
+        run: |
+          set +e
+          output="$(docker run --rm \
+            -e DATABASE_URL=postgresql+psycopg://enigma:unused@127.0.0.1:5432/enigma \
+            -e 'ENIGMA_API_KEYS={"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa":"tenant-ci"}' \
+            enigma-transaction-lab:ci 2>&1)"
+          status=$?
+          set -e
+          printf '%s\n' "$output"
+          test "$status" -ne 0
+          grep -q "No real provider adapters are available" <<<"$output"

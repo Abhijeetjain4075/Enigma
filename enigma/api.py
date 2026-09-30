@@ -115,6 +115,11 @@ def create_app(settings: Settings | None = None, *, database_url: str | None = N
             max_request_bytes=config.max_request_bytes,
         )
     config.validate()
+    if config.environment in {"staging", "production"}:
+        raise ConfigurationError(
+            "No real provider adapters are available; refusing to start "
+            "with simulator-only providers."
+        )
     engine = make_engine(config.database_url)
     if config.environment in {"development", "test"}:
         initialize_local_schema(engine)

@@ -15,3 +15,5 @@ Requires all product/provider/financial/legal/operations/evidence controls in `d
 ## Current disposition
 
 Gate A is being verified by repository tests and CI configuration. Gates B and C remain blocked; see `docs/implementation-status-2026-09-30.md`.
+
+The current build now refuses application startup in both `staging` and `production` because the only implemented providers are deterministic simulators. Local Compose binds to loopback and defaults to `development`; this guard prevents the existing simulator from being presented as a live provider integration. It is not a substitute for implementing and validating real provider adapters.

@@ -80,7 +80,7 @@ The repository now treats the strategic problem as **transaction interoperabilit
 
 ## Status
 
-Strategy and research repository with an executable, API-backed simulator transaction lab. It is **not** a production charging, payment, settlement, or provider-interoperability platform. No real provider, payment rail, funds, or physical equipment is contacted or controlled; simulator evidence is explicitly labeled as such. See [current implementation and launch status](docs/implementation-status-2026-09-30.md), [deployment runbook](docs/runbooks/deployment.md), and [readiness gates](docs/runbooks/readiness-gates.md).
+Strategy and research repository with an executable, API-backed simulator transaction lab for isolated local development and CI only. It is **not** a production charging, payment, settlement, or provider-interoperability platform. Staging/production startup now fails closed because no real provider adapter is configured; no real provider, payment rail, funds, or physical equipment is contacted or controlled. See [current implementation and launch status](docs/implementation-status-2026-09-30.md), [deployment runbook](docs/runbooks/deployment.md), and [readiness gates](docs/runbooks/readiness-gates.md).
 
 ## Run locally
 
@@ -90,11 +90,11 @@ Requires Python 3.12 or newer and [uv](https://docs.astral.sh/uv/):
 uv sync --all-extras --frozen
 export ENIGMA_ENV=development
 export DATABASE_URL=sqlite:///./enigma-dev.db
-export ENIGMA_DEV_API_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(32))')"
+export ENIGMA_API_KEYS="$(python -c 'import json,secrets; print(json.dumps({secrets.token_urlsafe(32): "tenant-local"}))')"
 uv run uvicorn enigma.main:app --host 127.0.0.1 --port 8000
 ```
 
-Open `/docs` for the generated API reference. The development server creates a local SQLite schema. Staging/production settings require PostgreSQL and long tenant API keys; production migrations must be a separate deployment step, not an API startup side effect. Detailed instructions and explicit production blockers are in the linked runbooks.
+Open `/docs` for the generated API reference. Every environment requires an explicit `ENIGMA_API_KEYS` map; there is no built-in credential fallback. The development server creates a local SQLite schema. Staging/production settings require PostgreSQL and long tenant API keys; production migrations must be a separate deployment step, not an API startup side effect. Detailed instructions and explicit production blockers are in the linked runbooks.
 
 ## Repository map
 

@@ -2,7 +2,7 @@
 
 ## Scope and warning
 
-This deploys the **simulator-only** API. It does not connect to a real provider, initiate a payment, move funds, or operate a charger. `compose.yaml` is a local/staging scaffold, not a production infrastructure certification. Do not expose its Postgres port or use a superuser application credential on the public internet.
+This deploys the **simulator-only** API for local development only. It does not connect to a real provider, initiate a payment, move funds, or operate a charger. The application factory now refuses to start in `staging` or `production` while this build has no real provider adapter. `compose.yaml` is a loopback-bound local-development scaffold, not staging infrastructure or production certification. Do not expose its Postgres port or use a superuser application credential on the public internet.
 
 ## Local development
 
@@ -15,11 +15,11 @@ python -m pip install --upgrade pip uv
 uv sync --all-extras --frozen
 export ENIGMA_ENV=development
 export DATABASE_URL=sqlite:///./enigma-dev.db
-export ENIGMA_DEV_API_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(32))')"
+export ENIGMA_API_KEYS="$(python -c 'import json,secrets; print(json.dumps({secrets.token_urlsafe(32): "tenant-local"}))')"
 uvicorn enigma.main:app --host 127.0.0.1 --port 8000
 ```
 
-The development-only fallback key is intentionally convenient and must never be used outside local development. The database tables are created locally at app construction; staging/production never auto-create schema.
+Every environment requires an explicit API-key-to-tenant map; no default development credential exists. The database tables are created locally at app construction; staging/production never auto-create schema.
 
 ## Container/Compose scaffold
 
@@ -27,10 +27,15 @@ Create a private `.env` (never commit it), use a 32+ character random key, and s
 
 ```bash
 umask 077
-printf 'POSTGRES_DB=enigma\nPOSTGRES_USER=enigma_owner\nPOSTGRES_PASSWORD=%s\nENIGMA_ENV=staging\nENIGMA_API_KEYS={"replace-with-random-32-plus-character-key":"tenant-demo"}\n' "$(openssl rand -hex 32)" > .env
+api_key="$(openssl rand -hex 32)"
+db_password="$(openssl rand -hex 32)"
+printf 'POSTGRES_DB=enigma\nPOSTGRES_USER=enigma_owner\nPOSTGRES_PASSWORD=%s\nENIGMA_ENV=development\nENIGMA_API_KEYS={"%s":"tenant-local"}\n' \
+  "$db_password" "$api_key" > .env
+export ENIGMA_LOAD_API_KEY="$api_key"
+unset api_key db_password
 ```
 
-The example above is only a template; replace the API key value with a separately generated, unique random secret. Compose's initial database owner is for a disposable local stack only. Do not use it as a production API runtime role.
+The command generates unique local credentials and stores them in a private `.env`; no example or fallback credential is used. Compose binds the API to `127.0.0.1` and defaults to development. Its initial database owner is for a disposable local stack only. Do not use it as a production API runtime role or set `ENIGMA_ENV=staging` to bypass the real-provider startup gate.
 
 ```bash
 docker compose build

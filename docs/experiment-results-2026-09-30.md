@@ -30,3 +30,10 @@ The GitHub Actions CI run for implementation commit `cabc66fcffe0f1cf131d2d583d3
 ## Not verified here
 
 The current sandbox has no Docker daemon/CLI, so the image build was verified only by the successful GitHub Actions run, not built locally. Live provider/standard conformance, a signed webhook path, production deployment, real payment/refund/settlement, external penetration testing, SLO/alerting, and backup/restore remain unverified. None may be inferred from the checks above.
+
+
+## Fail-closed production-boundary follow-up — 2026-10-01 (local, pre-push)
+
+The hardening changed the environment default to `production`, removed the implicit development API key, requires an explicit tenant API-key map in every environment, and rejects `staging`/`production` app construction before engine creation while no real provider adapter exists. The Docker image defaults to production; Compose explicitly defaults to development and binds the API to loopback only. A regression test covers both rejected environments and the no-default-credential behavior.
+
+Local verification on the follow-up tree: **24 passed, 1 PostgreSQL-only test skipped, 89.14% coverage**. Ruff formatting/lint, mypy, Bandit, pip-audit, lock integrity, SQLite migration/model parity, package build, whitespace, and scan for removed default/sample credential strings passed. The test suite still emits the upstream Starlette `httpx` TestClient deprecation warning; the unpublished local package is skipped by pip-audit because it is not a PyPI distribution. The local sandbox has no Docker daemon, and its PostgreSQL integration test requires a restricted runtime role, so the current follow-up commit's container refusal and live PostgreSQL checks must be confirmed by the GitHub Actions run linked from the implementation-status report.

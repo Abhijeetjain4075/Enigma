@@ -17,12 +17,12 @@ services:
   api:
     build: .
     environment:
-      ENIGMA_ENV: ${ENIGMA_ENV:-staging}
+      ENIGMA_ENV: ${ENIGMA_ENV:-development}
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       ENIGMA_API_KEYS: ${ENIGMA_API_KEYS:?Set ENIGMA_API_KEYS as a JSON key-to-tenant map}
       ENIGMA_MAX_REQUEST_BYTES: ${ENIGMA_MAX_REQUEST_BYTES:-1048576}
     ports:
-      - "${PORT:-8000}:8000"
+      - "127.0.0.1:${PORT:-8000}:8000"
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=3)"]
       interval: 20s
