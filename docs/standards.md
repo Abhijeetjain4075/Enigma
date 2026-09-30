@@ -4,65 +4,128 @@
 
 Reuse existing standards wherever they provide adequate interoperability. Do not create a new protocol merely to rename an existing capability.
 
-## OCPI
+## EV charging protocol stack
 
-OCPI is central to EV roaming and supports information exchange between eMSPs and CPOs, including authorization, tariffs, sessions, CDRs and related operations.
+### OCPI
 
-Enigma should investigate OCPI deeply before designing proprietary charging interfaces.
+OCPI is the principal open interface to investigate for CPO/eMSP roaming and related interoperability.
 
-## OCPP
+The official OCPI repository currently identifies **OCPI 2.3.0** as the latest official release. OCPI modules cover locations, tariffs, tokens, sessions, CDRs, commands, charging profiles and hub connectivity.
 
-OCPP standardizes communication between charging stations and charging management systems.
+Sources:
+- https://github.com/ocpi/ocpi
+- https://ocpi-protocol.com/
 
-Enigma should normally integrate above this layer rather than attempting to replace charger control infrastructure.
+Enigma must support versioned adapters and must not assume that every provider implements the same OCPI version or optional module set.
 
-## OICP
+### OCPP
 
-OICP is associated with Hubject's interoperability ecosystem and is relevant when evaluating roaming-hub integrations.
+OCPP standardizes communication between charging stations and central systems. OCA currently documents OCPP 1.6, 2.0.1 and 2.1.
 
-## ISO 15118
+OCPP 2.1 adds functionality including ISO 15118-20 support, bidirectional charging, DER control, battery swapping, local cost calculation and expanded authorization/payment options.
 
-ISO 15118 governs vehicle-to-charger communication and includes Plug & Charge capabilities.
+Enigma should normally integrate above the CSMS/charger-control layer rather than replacing OCPP infrastructure.
 
-It matters because the long-term user experience should minimize manual authentication.
+Sources:
+- https://openchargealliance.org/protocols/
+- https://openchargealliance.org/faq/
 
-## Payment standards
+### OICP
 
-Payment architecture must be evaluated separately from charging protocols. A charging protocol does not automatically solve merchant acquiring, refunds, KYC, fraud, tax, reconciliation, or regulated payment operations.
+OICP is associated with Hubject's interoperability ecosystem and should be treated as a versioned external roaming protocol when Hubject integrations are evaluated.
 
-## Data standards
+Source:
+https://www.hubject.com/company/download
 
-Investigate:
+### ISO 15118
 
-- station identifiers
-- EVSE identifiers
-- connector identifiers
-- vehicle identifiers
-- location schemas
-- tariff models
-- CDR structures
-- currency and tax representations
-- timestamps and time zones
-- status vocabularies.
+ISO 15118 governs EV-to-EVSE communication and supports automated authentication/Plug & Charge concepts as well as bidirectional energy-transfer use cases.
 
-## Enigma approach
+ISO 15118-20:2022 is current and has a 2026 amendment in the ISO catalogue.
 
-Build a canonical internal domain model and maintain protocol adapters at the edge.
+Sources:
+- https://www.iso.org/standard/77845.html
+- https://www.iso.org/ics/43.120/x/
 
-Do not make the internal model a one-to-one copy of one external standard.
+## Regulatory data interfaces
 
-## Research requirement
+EU AFIR introduces machine-readable data/API and national-access-point requirements for publicly accessible alternative-fuels infrastructure. Enigma must treat regulatory data access as a separate ingestion pathway from commercial roaming.
 
-Every protocol integration must document:
+Source:
+https://eur-lex.europa.eu/eli/reg/2023/1804/oj/eng
 
-- version
-- supported endpoints
+## Payment standards and rails
+
+Payment architecture must be evaluated separately from charging protocols.
+
+A charging protocol does not automatically solve:
+
+- merchant acquiring
+- payment aggregation
+- KYC/AML
+- fraud
+- refunds
+- chargebacks
+- tax
+- invoicing
+- safeguarding
+- reconciliation
+- cross-border settlement.
+
+Enigma should prefer licensed payment partners where appropriate rather than assuming it can itself hold or route regulated funds.
+
+## Canonical data model
+
+Maintain canonical models for:
+
+- Provider
+- Asset
+- EVSE
+- Connector
+- Vehicle
+- Identity
+- Token
+- Authorization
+- Tariff
+- Session
+- CDR
+- Transaction
+- MoneyMovement
+- Settlement
+- Evidence
+- Contract
+- Journey.
+
+External identifiers must include namespace, issuer/provider, value, validity, and verification/provenance.
+
+## Adapter requirements
+
+Every integration must document:
+
+- protocol/API name and version
+- supported endpoints/modules
 - authentication
 - rate limits
 - webhook/event semantics
-- error behavior
+- retry semantics
 - idempotency
+- error mapping
 - data freshness
 - commercial prerequisites
-- certification requirements
-- regional limitations.
+- certification/conformance requirements
+- regional limitations
+- data-protection implications.
+
+## Version policy
+
+External standards evolve independently from Enigma.
+
+Every adapter must pin its external version. Internal canonical contracts must remain stable where possible.
+
+Breaking external changes require:
+
+1. adapter versioning
+2. contract tests
+3. migration plan
+4. compatibility evidence
+5. rollback/deprecation strategy
