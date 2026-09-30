@@ -96,12 +96,28 @@ Concept and research repository. No production product or universal network is i
 - docs/decision-framework.md
 - docs/research-sources.md
 - docs/audit-2026-09-30.md
+- docs/audit-2026-09-30-v2.md
+- docs/research-evidence-model.md
+- docs/research-backlog.md
+- docs/research-sources.md
+- docs/standards-evidence.md
+- docs/competitive-matrix.md
+- docs/competitive-pressure-2026.md
+- docs/domain-expansion.md
+- docs/non-goals.md
 
 ### Architecture and transaction model
 
 - docs/architecture.md
 - docs/canonical-model.md
 - docs/transaction-state-machine.md
+- docs/authorization-policy.md
+- docs/ledger-reconciliation.md
+- docs/api-contract.md
+- docs/data-provenance.md
+- docs/tenant-and-multitenancy.md
+- docs/partner-onboarding.md
+- docs/testing-conformance.md
 - docs/integration-contract.md
 - docs/error-taxonomy.md
 - docs/observability.md
@@ -110,6 +126,13 @@ Concept and research repository. No production product or universal network is i
 
 - docs/standards.md
 - docs/security-privacy.md
+- docs/security-threat-model.md
+- docs/consent-and-data-governance.md
+- docs/governance.md
+- docs/launch-readiness.md
+- docs/glossary.md
+- docs/adr-0001-platform-boundary.md
+- docs/adr-0002-charging-wedge.md
 - docs/regulatory.md
 - SECURITY.md
 - CONTRIBUTING.md
