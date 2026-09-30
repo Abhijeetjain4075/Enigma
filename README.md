@@ -80,7 +80,21 @@ The repository now treats the strategic problem as **transaction interoperabilit
 
 ## Status
 
-Concept and research repository. No production product or universal network is implied.
+Strategy and research repository with an executable, API-backed simulator transaction lab. It is **not** a production charging, payment, settlement, or provider-interoperability platform. No real provider, payment rail, funds, or physical equipment is contacted or controlled; simulator evidence is explicitly labeled as such. See [current implementation and launch status](docs/implementation-status-2026-09-30.md), [deployment runbook](docs/runbooks/deployment.md), and [readiness gates](docs/runbooks/readiness-gates.md).
+
+## Run locally
+
+Requires Python 3.12 or newer and [uv](https://docs.astral.sh/uv/):
+
+```bash
+uv sync --all-extras --frozen
+export ENIGMA_ENV=development
+export DATABASE_URL=sqlite:///./enigma-dev.db
+export ENIGMA_DEV_API_KEY="$(python -c 'import secrets; print(secrets.token_urlsafe(32))')"
+uv run uvicorn enigma.main:app --host 127.0.0.1 --port 8000
+```
+
+Open `/docs` for the generated API reference. The development server creates a local SQLite schema. Staging/production settings require PostgreSQL and long tenant API keys; production migrations must be a separate deployment step, not an API startup side effect. Detailed instructions and explicit production blockers are in the linked runbooks.
 
 ## Repository map
 
@@ -144,6 +158,17 @@ Concept and research repository. No production product or universal network is i
 - docs/roadmap.md
 - docs/metrics.md
 
+### Executable implementation and operations
+
+- docs/adr-0003-simulator-first-transaction-lab.md
+- docs/simulator-adapter-contract.md
+- docs/experiment-results-2026-09-30.md
+- docs/implementation-status-2026-09-30.md
+- docs/adversarial-review-2026-09-30.md
+- docs/runbooks/deployment.md
+- docs/runbooks/operations.md
+- docs/runbooks/readiness-gates.md
+
 ## Guiding rule
 
 Do not confuse a large feature list with a coherent platform.
@@ -157,7 +182,6 @@ Every future capability should answer:
 5. What evidence proves the operation works?
 6. What regulatory responsibility attaches to the flow?
 7. What becomes harder to replicate as the network grows?
-
 
 ## Deep audit and competitive research
 
@@ -175,7 +199,7 @@ These documents deliberately distinguish public evidence from hypotheses and unv
 
 ## Current implementation warning
 
-Enigma is not yet a production interoperability service. The repository currently contains a research and architecture foundation. The next validation step is executable transaction orchestration with a deterministic provider simulator, protocol fixtures, evidence capture, reconciliation, automated tests, and then one authorized real provider or sandbox.
+Enigma is not yet a production interoperability service. The repository now contains a simulator-only transaction lab; it does not contact or control real providers, payment services, funds, or equipment. The next validation step is partner authorization, protocol fixtures, an approved provider sandbox, and production-specific security/operations evidence.
 
 ## Fresh external evidence
 
@@ -200,10 +224,10 @@ Key current sources include:
 - EU Common European Access Point research: https://op.europa.eu/en/publication-detail/-/publication/132a219e-f3f5-11ef-b7db-01aa75ed71a1/language-en
 - NPCI NETC/FASTag: https://www.npci.org.in/product/netc/about-netc
 
-
 ## Adversarial audit v4
 
 The 2026-09-30 v4 audit added:
+
 - adversarial competitive universe expansion
 - open-source implementation audit
 - current OCPI/OCPP/ISO 15118 evolution
@@ -213,6 +237,7 @@ The 2026-09-30 v4 audit added:
 - explicit hard-stop criteria
 
 See:
+
 - docs/audit-2026-09-30-v4.md
 - docs/competitive-universe-expansion-2026.md
 - docs/open-source-competitive-audit-2026.md

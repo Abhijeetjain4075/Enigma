@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: enigma_ci
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d enigma_ci"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: python -m pip install uv==0.12.19
+      - run: uv lock --check
+      - run: uv sync --all-extras --frozen
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run mypy enigma
+      - run: uv run pytest --cov=enigma --cov-report=term-missing --cov-fail-under=80
+      - name: Validate SQLite migration and model parity
+        run: uv run alembic upgrade head && uv run alembic check
+        env:
+          DATABASE_URL: sqlite:///./migration-check.db
+          ENIGMA_ENV: test
+      - name: Validate PostgreSQL migration, downgrade, and upgrade
+        run: |
+          uv run alembic upgrade head
+          uv run alembic downgrade base
+          uv run alembic upgrade head
+          uv run alembic check
+        env:
+          DATABASE_URL: postgresql+psycopg://postgres:postgres@127.0.0.1:5432/enigma_ci
+      - name: Create restricted PostgreSQL runtime role
+        run: |
+          PGPASSWORD=postgres psql -h 127.0.0.1 -U postgres -d enigma_ci -v ON_ERROR_STOP=1 -c \
+            "CREATE ROLE enigma_runtime LOGIN PASSWORD 'runtime-secret' NOSUPERUSER NOCREATEDB NOCREATEROLE NOINHERIT NOREPLICATION NOBYPASSRLS; GRANT CONNECT ON DATABASE enigma_ci TO enigma_runtime; GRANT USAGE ON SCHEMA public TO enigma_runtime; GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO enigma_runtime; GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO enigma_runtime;"
+      - name: Validate tenant row-level security with a non-owner role
+        run: uv run pytest -q tests/test_postgres_rls.py
+        env:
+          ENIGMA_TEST_POSTGRES_URL: postgresql+psycopg://enigma_runtime:runtime-secret@127.0.0.1:5432/enigma_ci
+      - run: uv run bandit -q -r enigma
+      - run: uv run pip-audit
+      - name: Build container image
+        run: docker build --tag enigma-transaction-lab:ci .

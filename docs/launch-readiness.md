@@ -27,7 +27,7 @@ Enigma is not launch-ready merely because an API works in a sandbox.
 - [ ] event processing
 - [ ] reconciliation
 - [ ] observability
-- [rate limiting
+- [ ] rate limiting
 - [ ] disaster recovery
 - [ ] rollback
 
