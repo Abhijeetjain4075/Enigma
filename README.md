@@ -76,39 +76,50 @@ The longer-term thesis is to generalize the same interoperability model across m
 
 The one app for multiple charging networks proposition already exists in multiple forms. Enigma therefore must not rely on generic aggregation as its differentiation.
 
-Relevant categories include:
-
-- global roaming hubs
-- eMSPs
-- CPO software
-- consumer charging aggregators
-- OEM charging ecosystems
-- payment and settlement infrastructure
-- mobility platforms
-
-The strategic research question is:
-
-> What important interoperability, trust, orchestration, identity, settlement, or developer-platform problem remains inadequately solved across these existing layers?
-
-See docs/competitive-landscape.md and docs/strategy.md.
+The repository now treats the strategic problem as **transaction interoperability plus evidence, reliability, programmable integration, and cross-domain orchestration**, subject to empirical validation.
 
 ## Status
 
-Concept and research repository. No production product is implied by this repository.
+Concept and research repository. No production product or universal network is implied.
 
 ## Repository map
 
-- docs/vision.md - long-term thesis
-- docs/problem.md - problem definition
-- docs/architecture.md - software architecture
-- docs/scope.md - what belongs inside and outside Enigma
-- docs/competitive-landscape.md - competitor and ecosystem map
-- docs/standards.md - protocol and interoperability considerations
-- docs/business-model.md - possible economic models
-- docs/roadmap.md - staged validation and build plan
-- docs/strategy.md - strategic hypotheses and moat
-- docs/ideas.md - idea ledger from the concept exploration
-- docs/open-questions.md - unresolved decisions and research agenda
+### Strategy and research
+
+- docs/vision.md
+- docs/problem.md
+- docs/competitive-landscape.md
+- docs/competitive-matrix.md
+- docs/strategy.md
+- docs/ideas.md
+- docs/open-questions.md
+- docs/decision-framework.md
+- docs/research-sources.md
+- docs/audit-2026-09-30.md
+
+### Architecture and transaction model
+
+- docs/architecture.md
+- docs/canonical-model.md
+- docs/transaction-state-machine.md
+- docs/integration-contract.md
+- docs/error-taxonomy.md
+- docs/observability.md
+
+### Standards, security, and regulation
+
+- docs/standards.md
+- docs/security-privacy.md
+- docs/regulatory.md
+- SECURITY.md
+- CONTRIBUTING.md
+
+### Product and economics
+
+- docs/scope.md
+- docs/business-model.md
+- docs/roadmap.md
+- docs/metrics.md
 
 ## Guiding rule
 
@@ -117,7 +128,9 @@ Do not confuse a large feature list with a coherent platform.
 Every future capability should answer:
 
 1. What fragmented system does it connect?
-2. What common identity or transaction does it expose?
+2. What common identity, capability, service, or transaction does it expose?
 3. Why does interoperability create value?
 4. Who pays for the software?
-5. What becomes harder to replicate as the network grows?
+5. What evidence proves the operation works?
+6. What regulatory responsibility attaches to the flow?
+7. What becomes harder to replicate as the network grows?
