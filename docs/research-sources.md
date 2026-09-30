@@ -101,6 +101,6 @@ All entries above were reviewed for the 2026-09-30 audit and should be revalidat
 ### India consumer aggregation
 - IONAGE app: https://play.google.com/store/apps/details?id=com.ionage.app
 - IONAGE platform: https://www.ionage.in/
-- Powy interoperability list: https://powy.energy/en/charge-your-ev/charge-your-ev/emsp-list-interoperable-with-powy/
+- Powy interoperability list: https://powy.energy/en/charge-your-ev/emsp-list-interoperable-with-powy/
 
 All claims from this section are public-source observations reviewed during the 2026-09-30 v4 audit.
