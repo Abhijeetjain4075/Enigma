@@ -1,37 +1,31 @@
 """Backendless Enigma protocol primitives.
 
-This module is deliberately independent of the SQL/FastAPI transaction lab.
-It models the minimum protocol state that participants can carry and verify
-without an Enigma-operated database.
+The prototype is independent of the SQL/FastAPI simulator. It proves that
+transaction intent, local event history, evidence, replay detection,
+reconciliation, and recovery bundles do not inherently require an Enigma
+database.
 
-Security boundary:
-- Ed25519 signatures authenticate an issuer key; they do not establish that
-  the issuer is authorized to operate a provider.
-- The provider remains authoritative for physical-world service state.
-- A local Enigma state is never promoted to provider-authoritative state merely
-  because it is signed.
-- This module performs no network I/O and never moves money or controls
-  physical equipment.
+The prototype uses a standard-library keyed MAC so the repository's locked
+dependency graph remains unchanged. Production identity should replace the
+keyed authenticator with an asymmetric scheme such as Ed25519 plus an explicit
+trust/key-discovery mechanism. A valid MAC/signature never grants provider
+authorization.
 """
 
 from __future__ import annotations
 
 import base64
 import hashlib
+import hmac
 import json
+import secrets
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from typing import Any
-
-from cryptography.exceptions import InvalidSignature
-from cryptography.hazmat.primitives.asymmetric.ed25519 import (
-    Ed25519PrivateKey,
-    Ed25519PublicKey,
-)
+from typing import Any, Callable
 
 PROTOCOL = "enigma-protocol"
 PROTOCOL_VERSION = "0.1"
-ALGORITHM = "Ed25519"
+ALGORITHM = "HMAC-SHA256"
 
 
 class ProtocolError(ValueError):
@@ -40,15 +34,11 @@ class ProtocolError(ValueError):
 
 def _canonical(value: Any) -> bytes:
     return json.dumps(
-        value,
-        sort_keys=True,
-        separators=(",", ":"),
-        ensure_ascii=False,
+        value, sort_keys=True, separators=(",", ":"), ensure_ascii=False
     ).encode("utf-8")
 
 
 def content_hash(value: Any) -> str:
-    """Return a stable SHA-256 content identifier for a JSON value."""
     return hashlib.sha256(_canonical(value)).hexdigest()
 
 
@@ -68,78 +58,73 @@ def _utc(value: datetime) -> str:
 
 @dataclass(frozen=True, slots=True)
 class KeyPair:
-    private_key: Ed25519PrivateKey
-    public_key: Ed25519PublicKey
+    """Local issuer/verifier key material for the prototype MAC scheme."""
+
+    secret: bytes
 
     @classmethod
     def generate(cls) -> "KeyPair":
-        private = Ed25519PrivateKey.generate()
-        return cls(private, private.public_key())
+        return cls(secrets.token_bytes(32))
 
     @property
     def key_id(self) -> str:
-        raw = self.public_key.public_bytes_raw()
-        return "ed25519:" + hashlib.sha256(raw).hexdigest()[:32]
-
-    @property
-    def public_key_b64(self) -> str:
-        return _b64(self.public_key.public_bytes_raw())
+        return "hmac:" + hashlib.sha256(self.secret).hexdigest()[:32]
 
 
-def _signed_payload(payload: dict[str, Any], key: KeyPair) -> dict[str, Any]:
-    unsigned = dict(payload)
-    unsigned.pop("signature", None)
-    signature = key.private_key.sign(_canonical(unsigned))
+KeyLookup = Callable[[str], bytes]
+
+
+def _authenticate(payload: dict[str, Any], key: KeyPair) -> dict[str, Any]:
+    unsigned = {k: v for k, v in payload.items() if k != "signature"}
+    mac = hmac.new(key.secret, _canonical(unsigned), hashlib.sha256).digest()
     return {
         **unsigned,
         "signature": {
             "algorithm": ALGORITHM,
             "key_id": key.key_id,
-            "public_key": key.public_key_b64,
-            "value": _b64(signature),
+            "value": _b64(mac),
         },
     }
 
 
-def verify_signed(payload: dict[str, Any]) -> bool:
+def verify_signed(payload: dict[str, Any], key_lookup: KeyLookup) -> bool:
     signature = payload.get("signature")
     if not isinstance(signature, dict):
         raise ProtocolError("missing signature")
     if signature.get("algorithm") != ALGORITHM:
-        raise ProtocolError("unsupported signature algorithm")
+        raise ProtocolError("unsupported authentication algorithm")
+    key_id = signature.get("key_id")
+    if not isinstance(key_id, str):
+        raise ProtocolError("missing key identifier")
     try:
-        public = Ed25519PublicKey.from_public_bytes(_unb64(str(signature["public_key"])))
-        public.verify(
-            _unb64(str(signature["value"])),
-            _canonical({k: v for k, v in payload.items() if k != "signature"}),
-        )
-    except (KeyError, ValueError, TypeError, InvalidSignature) as exc:
-        raise ProtocolError("invalid signature") from exc
-    expected_key_id = "ed25519:" + hashlib.sha256(
-        public.public_bytes_raw()
-    ).hexdigest()[:32]
-    if expected_key_id != signature.get("key_id"):
-        raise ProtocolError("signature key identifier mismatch")
+        secret = key_lookup(key_id)
+    except KeyError as exc:
+        raise ProtocolError("unknown signing key") from exc
+    unsigned = {k: v for k, v in payload.items() if k != "signature"}
+    expected = hmac.new(secret, _canonical(unsigned), hashlib.sha256).digest()
+    try:
+        actual = _unb64(str(signature["value"]))
+    except (ValueError, TypeError) as exc:
+        raise ProtocolError("invalid authentication value") from exc
+    if not hmac.compare_digest(actual, expected):
+        raise ProtocolError("invalid signature")
     return True
 
 
 def deterministic_transaction_id(
-    *,
-    issuer_key_id: str,
-    nonce: str,
-    intent_body: dict[str, Any],
+    *, issuer_key_id: str, nonce: str, intent_body: dict[str, Any]
 ) -> str:
-    """Derive a stable transaction identifier from issuer + nonce + intent."""
     if not issuer_key_id or not nonce:
         raise ProtocolError("issuer_key_id and nonce are required")
-    material = {
-        "protocol": PROTOCOL,
-        "version": PROTOCOL_VERSION,
-        "issuer_key_id": issuer_key_id,
-        "nonce": nonce,
-        "intent": intent_body,
-    }
-    return "txn_" + content_hash(material)
+    return "txn_" + content_hash(
+        {
+            "protocol": PROTOCOL,
+            "version": PROTOCOL_VERSION,
+            "issuer_key_id": issuer_key_id,
+            "nonce": nonce,
+            "intent": intent_body,
+        }
+    )
 
 
 def create_intent(
@@ -154,7 +139,6 @@ def create_intent(
     authorization_ref: str | None = None,
     parameters: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Create a signed, portable intent. No provider is contacted."""
     body = {
         "protocol": PROTOCOL,
         "protocol_version": PROTOCOL_VERSION,
@@ -169,13 +153,10 @@ def create_intent(
         "authorization_ref": authorization_ref,
         "parameters": parameters or {},
     }
-    transaction_id = deterministic_transaction_id(
-        issuer_key_id=key.key_id,
-        nonce=nonce,
-        intent_body=body,
+    body["transaction_id"] = deterministic_transaction_id(
+        issuer_key_id=key.key_id, nonce=nonce, intent_body=body
     )
-    body["transaction_id"] = transaction_id
-    return _signed_payload(body, key)
+    return _authenticate(body, key)
 
 
 def create_event(
@@ -190,7 +171,6 @@ def create_event(
     authority: str,
     payload: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Create one signed event linked to the previous event hash."""
     if sequence < 0:
         raise ProtocolError("sequence must be non-negative")
     body = {
@@ -208,23 +188,20 @@ def create_event(
         "payload": payload or {},
     }
     body["event_hash"] = content_hash(body)
-    return _signed_payload(body, key)
+    return _authenticate(body, key)
 
 
-def verify_event_chain(events: list[dict[str, Any]]) -> bool:
-    """Verify signatures, hashes, sequence and predecessor links."""
+def verify_event_chain(events: list[dict[str, Any]], key_lookup: KeyLookup) -> bool:
     expected_previous: str | None = None
     expected_sequence = 0
     for event in events:
-        verify_signed(event)
+        verify_signed(event, key_lookup)
         if event.get("sequence") != expected_sequence:
             raise ProtocolError("event sequence gap or duplicate")
         if event.get("previous_event_hash") != expected_previous:
             raise ProtocolError("event predecessor mismatch")
-        unsigned_without_signature = {
-            k: v for k, v in event.items() if k not in {"signature", "event_hash"}
-        }
-        if content_hash(unsigned_without_signature) != event.get("event_hash"):
+        unsigned = {k: v for k, v in event.items() if k not in {"signature", "event_hash"}}
+        if content_hash(unsigned) != event.get("event_hash"):
             raise ProtocolError("event hash mismatch")
         expected_previous = event["event_hash"]
         expected_sequence += 1
@@ -241,7 +218,6 @@ def create_evidence(
     payload: dict[str, Any],
     authority: str,
 ) -> dict[str, Any]:
-    """Create a signed evidence object with a content identifier."""
     body = {
         "protocol": PROTOCOL,
         "protocol_version": PROTOCOL_VERSION,
@@ -254,14 +230,12 @@ def create_evidence(
         "payload": payload,
     }
     body["content_id"] = content_hash(body)
-    return _signed_payload(body, key)
+    return _authenticate(body, key)
 
 
 def detect_replay(
-    seen_event_hashes: set[str],
-    events: list[dict[str, Any]],
+    seen_event_hashes: set[str], events: list[dict[str, Any]]
 ) -> tuple[set[str], list[str]]:
-    """Return the updated seen set and hashes that were already observed."""
     duplicates: list[str] = []
     updated = set(seen_event_hashes)
     for event in events:
@@ -276,12 +250,12 @@ def detect_replay(
 def reconcile_histories(
     local_events: list[dict[str, Any]],
     external_events: list[dict[str, Any]],
+    key_lookup: KeyLookup,
 ) -> dict[str, Any]:
-    """Compare independently held signed histories without a central store."""
-    verify_event_chain(local_events)
-    verify_event_chain(external_events)
-    local_by_hash = {content_hash(e): e for e in local_events}
-    external_by_hash = {content_hash(e): e for e in external_events}
+    verify_event_chain(local_events, key_lookup)
+    verify_event_chain(external_events, key_lookup)
+    local_by_hash = {e["event_hash"]: e for e in local_events}
+    external_by_hash = {e["event_hash"]: e for e in external_events}
     common = sorted(set(local_by_hash) & set(external_by_hash))
     local_only = sorted(set(local_by_hash) - set(external_by_hash))
     external_only = sorted(set(external_by_hash) - set(local_by_hash))
@@ -301,7 +275,11 @@ def reconcile_histories(
                     "external_hash": external_tail["event_hash"],
                 }
             )
-    status = "matched" if not local_only and not external_only and not conflicts else "reconciliation_required"
+    status = (
+        "matched"
+        if not local_only and not external_only and not conflicts
+        else "reconciliation_required"
+    )
     return {
         "status": status,
         "common_event_hashes": common,
@@ -316,25 +294,25 @@ def export_bundle(
     intent: dict[str, Any],
     events: list[dict[str, Any]],
     evidence: list[dict[str, Any]],
+    key_lookup: KeyLookup,
 ) -> dict[str, Any]:
-    """Create a portable transaction bundle that can be stored anywhere."""
-    verify_signed(intent)
-    verify_event_chain(events)
+    verify_signed(intent, key_lookup)
+    verify_event_chain(events, key_lookup)
     for item in evidence:
-        verify_signed(item)
+        verify_signed(item, key_lookup)
+    contents = {"intent": intent, "events": events, "evidence": evidence}
     return {
         "protocol": PROTOCOL,
         "protocol_version": PROTOCOL_VERSION,
         "type": "transaction_bundle",
-        "bundle_id": content_hash({"intent": intent, "events": events, "evidence": evidence}),
-        "intent": intent,
-        "events": events,
-        "evidence": evidence,
+        "bundle_id": content_hash(contents),
+        **contents,
     }
 
 
-def import_bundle(bundle: dict[str, Any]) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]:
-    """Verify and unpack a portable bundle after process/device recovery."""
+def import_bundle(
+    bundle: dict[str, Any], key_lookup: KeyLookup
+) -> tuple[dict[str, Any], list[dict[str, Any]], list[dict[str, Any]]]:
     if bundle.get("type") != "transaction_bundle":
         raise ProtocolError("unsupported bundle type")
     intent = bundle.get("intent")
@@ -342,13 +320,13 @@ def import_bundle(bundle: dict[str, Any]) -> tuple[dict[str, Any], list[dict[str
     evidence = bundle.get("evidence")
     if not isinstance(intent, dict) or not isinstance(events, list) or not isinstance(evidence, list):
         raise ProtocolError("malformed transaction bundle")
-    expected_id = content_hash({"intent": intent, "events": events, "evidence": evidence})
-    if bundle.get("bundle_id") != expected_id:
+    contents = {"intent": intent, "events": events, "evidence": evidence}
+    if bundle.get("bundle_id") != content_hash(contents):
         raise ProtocolError("bundle content identifier mismatch")
-    verify_signed(intent)
-    verify_event_chain(events)
+    verify_signed(intent, key_lookup)
+    verify_event_chain(events, key_lookup)
     for item in evidence:
         if not isinstance(item, dict):
             raise ProtocolError("malformed evidence object")
-        verify_signed(item)
+        verify_signed(item, key_lookup)
     return intent, events, evidence
