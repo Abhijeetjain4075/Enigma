@@ -200,6 +200,10 @@ These documents deliberately distinguish public evidence from hypotheses and unv
 
 The 2026-09-30 public-source audit adds 43 subject profiles across providers, open-source substitutes, protocols, and selected EU, India, and U.S. regulatory/security boundaries; it records sources, confidence limits, falsifiable gaps, and unavailable evidence.
 
+## Backendless protocol direction
+
+Enigma's core interoperability protocol is now designed so that Enigma does not inherently require an Enigma-operated long-running backend. Portable transaction intent, local state, authenticated event history, evidence, reconciliation, and recovery can be carried by participants. Provider-specific integrations may still require customer/operator infrastructure or an optional relay. See [backendless architecture](docs/backendless-architecture-2026-10-01.md) and [provider compatibility evidence](docs/provider-compatibility-2026-10-01.md).
+
 ## Current implementation warning
 
 Enigma is not yet a production interoperability service. The repository now contains a simulator-only transaction lab; it does not contact or control real providers, payment services, funds, or equipment. The next validation step is partner authorization, protocol fixtures, an approved provider sandbox, and production-specific security/operations evidence.
