@@ -6,6 +6,8 @@ from enigma.protocol import (
     KeyPair,
     ProtocolError,
     content_hash,
+    authorize_intent,
+    create_delegation,
     create_evidence,
     create_event,
     create_intent,
@@ -131,3 +133,58 @@ def test_bundle_detects_tampering() -> None:
     bundle["bundle_id"] = "bad"
     with pytest.raises(ProtocolError, match="bundle content identifier"):
         import_bundle(bundle, lookup)
+
+
+def test_delegated_authorization_is_scoped_and_time_bounded() -> None:
+    key, lookup, intent, _, _ = _fixture()
+    delegation = create_delegation(
+        key=key,
+        subject=intent["principal"],
+        audience=intent["provider_id"],
+        operations=[intent["operation"]],
+        resource=intent["resource_id"],
+        issued_at=NOW,
+        expires_at=NOW.replace(hour=13),
+        nonce="delegation-1",
+    )
+    decision = authorize_intent(
+        intent=intent, delegation=delegation, key_lookup=lookup, now=NOW
+    )
+    assert decision["decision"] == "allow"
+    assert decision["delegation_nonce"] == "delegation-1"
+
+
+def test_delegation_rejects_out_of_scope_operation() -> None:
+    key, lookup, intent, _, _ = _fixture()
+    delegation = create_delegation(
+        key=key,
+        subject=intent["principal"],
+        audience=intent["provider_id"],
+        operations=["charge.stop"],
+        resource=intent["resource_id"],
+        issued_at=NOW,
+        expires_at=NOW.replace(hour=13),
+        nonce="delegation-2",
+    )
+    with pytest.raises(ProtocolError, match="outside delegation scope"):
+        authorize_intent(
+            intent=intent, delegation=delegation, key_lookup=lookup, now=NOW
+        )
+
+
+def test_expired_delegation_is_rejected() -> None:
+    key, lookup, intent, _, _ = _fixture()
+    delegation = create_delegation(
+        key=key,
+        subject=intent["principal"],
+        audience=intent["provider_id"],
+        operations=[intent["operation"]],
+        resource=intent["resource_id"],
+        issued_at=NOW.replace(hour=10),
+        expires_at=NOW.replace(hour=11),
+        nonce="delegation-3",
+    )
+    with pytest.raises(ProtocolError, match="validity window"):
+        authorize_intent(
+            intent=intent, delegation=delegation, key_lookup=lookup, now=NOW
+        )
