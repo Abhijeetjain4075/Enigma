@@ -93,7 +93,8 @@ def test_tampering_is_detected() -> None:
 
 
 def test_replay_is_detected_without_central_store() -> None:
-    _, _, _, events, _ = _fixture()
+    _, lookup, _, events, _ = _fixture()
+    verify_event_chain(events, lookup)
     seen, duplicates = detect_replay(set(), events)
     assert duplicates == []
     _, duplicates = detect_replay(seen, events)
