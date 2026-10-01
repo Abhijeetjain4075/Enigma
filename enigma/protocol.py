@@ -306,7 +306,9 @@ def detect_replay(
     duplicates: list[str] = []
     updated = set(seen_event_hashes)
     for event in events:
-        event_hash = content_hash(event)
+        event_hash = event.get("event_hash")
+        if not isinstance(event_hash, str):
+            raise ProtocolError("replay detection requires an event hash")
         if event_hash in updated:
             duplicates.append(event_hash)
         else:
