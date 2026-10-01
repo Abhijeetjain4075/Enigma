@@ -226,7 +226,7 @@ def verify_event_chain(events: list[dict[str, Any]]) -> bool:
         }
         if content_hash(unsigned_without_signature) != event.get("event_hash"):
             raise ProtocolError("event hash mismatch")
-        expected_previous = content_hash(event)
+        expected_previous = event["event_hash"]
         expected_sequence += 1
     return True
 
