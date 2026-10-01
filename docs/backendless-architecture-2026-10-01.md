@@ -18,7 +18,7 @@ The first prototype in `enigma/protocol.py` demonstrates that these primitives c
 
 - deterministic transaction identifiers
 - signed transaction intents
-- Ed25519 signature verification
+- cryptographic keyed authentication verification
 - local event state
 - hash-linked event histories
 - signed evidence objects
@@ -95,7 +95,7 @@ A signed intent contains:
 - parameters
 - deterministic transaction ID
 
-The signature authenticates the issuer. It does not grant provider authorization.
+The authenticator proves possession of an issuer key known to the verifier. It does not grant provider authorization. The prototype uses HMAC-SHA256; production should use an asymmetric signature scheme such as Ed25519 with explicit trust/key discovery.
 
 ### Event
 
@@ -213,7 +213,7 @@ Threats requiring explicit controls:
 
 - stolen client key -> revoke/rotate delegation; provider authorization remains separate
 - replay -> nonce, deterministic IDs, provider idempotency
-- event forgery -> signatures
+- event forgery -> cryptographic authentication; production asymmetric signatures
 - event reordering -> sequence/predecessor verification
 - rollback -> monotone sequence + external authoritative state
 - split brain -> preserve competing histories and reconcile
@@ -224,7 +224,7 @@ Threats requiring explicit controls:
 - optional relay SSRF -> strict provider allowlists and egress policy
 - supply chain -> signed releases, lockfiles, immutable CI dependencies
 
-Cryptography authenticates messages; it does not establish legal or commercial authority.
+Cryptography authenticates messages; it does not establish legal or commercial authority. The prototype's keyed MAC is not a substitute for production public-key trust.
 
 ## Provider compatibility boundary
 
