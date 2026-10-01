@@ -318,7 +318,11 @@ def import_bundle(
     intent = bundle.get("intent")
     events = bundle.get("events")
     evidence = bundle.get("evidence")
-    if not isinstance(intent, dict) or not isinstance(events, list) or not isinstance(evidence, list):
+    if (
+        not isinstance(intent, dict)
+        or not isinstance(events, list)
+        or not isinstance(evidence, list)
+    ):
         raise ProtocolError("malformed transaction bundle")
     contents = {"intent": intent, "events": events, "evidence": evidence}
     if bundle.get("bundle_id") != content_hash(contents):
