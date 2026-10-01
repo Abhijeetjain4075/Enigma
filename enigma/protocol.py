@@ -159,6 +159,73 @@ def create_intent(
     return _authenticate(body, key)
 
 
+def create_delegation(
+    *,
+    key: KeyPair,
+    subject: str,
+    audience: str,
+    operations: list[str],
+    resource: str,
+    issued_at: datetime,
+    expires_at: datetime,
+    nonce: str,
+) -> dict[str, Any]:
+    if expires_at <= issued_at:
+        raise ProtocolError("delegation expiry must be after issuance")
+    if not operations:
+        raise ProtocolError("delegation must grant at least one operation")
+    body = {
+        "protocol": PROTOCOL,
+        "protocol_version": PROTOCOL_VERSION,
+        "type": "delegation",
+        "issuer": key.key_id,
+        "subject": subject,
+        "audience": audience,
+        "operations": sorted(set(operations)),
+        "resource": resource,
+        "issued_at": _utc(issued_at),
+        "expires_at": _utc(expires_at),
+        "nonce": nonce,
+    }
+    return _authenticate(body, key)
+
+
+def authorize_intent(
+    *,
+    intent: dict[str, Any],
+    delegation: dict[str, Any],
+    key_lookup: KeyLookup,
+    now: datetime,
+) -> dict[str, Any]:
+    verify_signed(intent, key_lookup)
+    verify_signed(delegation, key_lookup)
+    if intent.get("issuer") != delegation.get("issuer"):
+        raise ProtocolError("intent issuer does not match delegation issuer")
+    if intent.get("principal") != delegation.get("subject"):
+        raise ProtocolError("intent principal is not delegated")
+    if intent.get("provider_id") != delegation.get("audience"):
+        raise ProtocolError("intent provider does not match delegation audience")
+    if intent.get("operation") not in delegation.get("operations", []):
+        raise ProtocolError("operation is outside delegation scope")
+    if intent.get("resource_id") != delegation.get("resource"):
+        raise ProtocolError("resource is outside delegation scope")
+    issued_at = datetime.fromisoformat(str(delegation["issued_at"]).replace("Z", "+00:00"))
+    expires_at = datetime.fromisoformat(str(delegation["expires_at"]).replace("Z", "+00:00"))
+    current = now if now.tzinfo is not None else now.replace(tzinfo=UTC)
+    if current < issued_at or current >= expires_at:
+        raise ProtocolError("delegation is outside its validity window")
+    return {
+        "decision": "allow",
+        "issuer": delegation["issuer"],
+        "subject": delegation["subject"],
+        "audience": delegation["audience"],
+        "operation": intent["operation"],
+        "resource": intent["resource_id"],
+        "delegation_nonce": delegation["nonce"],
+        "expires_at": delegation["expires_at"],
+    }
+
+
 def create_event(
     *,
     key: KeyPair,
