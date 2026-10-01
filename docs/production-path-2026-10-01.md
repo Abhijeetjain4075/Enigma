@@ -4,13 +4,13 @@
 
 The repository is an executable simulator transaction laboratory, not a production interoperability service. The existing fail-closed production guard remains intact.
 
-The new backendless protocol prototype is intentionally separate from the simulator API and database. It provides signed, portable transaction primitives without requiring an Enigma-operated database.
+The new backendless protocol prototype is intentionally separate from the simulator API and database. It provides cryptographically authenticated, portable transaction primitives without requiring an Enigma-operated database.
 
 ## Architecture direction
 
 **Enigma protocol mandatory; Enigma hosting optional.**
 
-The core protocol carries portable transaction intent, local state, signed events, evidence and reconciliation material. Provider APIs, payment processors, identity systems and physical/service state remain external authorities.
+The core protocol carries portable transaction intent, local state, authenticated events, evidence and reconciliation material. The prototype uses HMAC-SHA256; the production trust model should use asymmetric signatures such as Ed25519. Provider APIs, payment processors, identity systems and physical/service state remain external authorities.
 
 Deployment modes:
 
@@ -28,7 +28,7 @@ Added:
 
 Updated:
 
-- `pyproject.toml` to include the Ed25519 cryptography dependency.
+- no dependency changes; the protocol proof uses the Python standard library.
 
 The existing simulator, database schema, API, production refusal and provider boundary were not removed.
 
