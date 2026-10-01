@@ -34,6 +34,10 @@ The existing simulator, database schema, API, production refusal and provider bo
 
 ## Provider path
 
+Current public compatibility evidence is recorded in `docs/provider-compatibility-2026-10-01.md`. It shows that major roaming paths remain platform-to-platform and generally require credentials, agreements, endpoints, or managed onboarding; this is a constraint on deployment mode, not on the protocol core.
+
+## Provider path
+
 No provider credentials or authorization are currently available to this implementation. Therefore no live provider integration is claimed.
 
 The first real provider proof remains externally blocked on:
