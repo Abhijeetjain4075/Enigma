@@ -21,7 +21,7 @@ import json
 import secrets
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from typing import Any, Callable
+from typing import Any, Mapping
 
 PROTOCOL = "enigma-protocol"
 PROTOCOL_VERSION = "0.1"
@@ -71,7 +71,7 @@ class KeyPair:
         return "hmac:" + hashlib.sha256(self.secret).hexdigest()[:32]
 
 
-KeyLookup = Callable[[str], bytes]
+KeyLookup = Mapping[str, bytes]
 
 
 def _authenticate(payload: dict[str, Any], key: KeyPair) -> dict[str, Any]:
@@ -97,7 +97,7 @@ def verify_signed(payload: dict[str, Any], key_lookup: KeyLookup) -> bool:
     if not isinstance(key_id, str):
         raise ProtocolError("missing key identifier")
     try:
-        secret = key_lookup(key_id)
+        secret = key_lookup[key_id]
     except KeyError as exc:
         raise ProtocolError("unknown signing key") from exc
     unsigned = {k: v for k, v in payload.items() if k != "signature"}
